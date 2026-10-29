@@ -1,0 +1,32 @@
+# PlatformIO
+.pio/
+.pioenvs/
+.piolibdeps/
+.clang_format
+
+# Compiled binaries & dumps
+*.bin
+*.hex
+*.elf
+!firmware/README.md
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# VS Code / IDEs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Original closed-source Electron build package
+TinkerTek-alpha-V0.1.5/
