@@ -235,3 +235,39 @@ distance_cm = raw / 10000
 | Camera / AI module | 🔬 Under investigation |
 | Audio I²S player | 🔬 Under investigation |
 | Magnetometer (QMC5883P) | 🔬 Referenced in platformio.ini deps |
+
+---
+
+## 🔬 Firmware Reverse Engineering Details
+
+### ESP32-S3 Flash Memory Map (16 MB Total)
+| Offset | Size | Partition Name | Type / Subtype | Contents |
+|---|---|---|---|---|
+| `0x000000` | 36 KB | **Bootloader** | - | ESP32-S3 2nd stage bootloader |
+| `0x008000` | 4 KB | **Partition Table** | - | Standard ESP-IDF partition entries |
+| `0x009000` | 24 KB | **nvs** | `0x01 / 0x02` | Non-Volatile Storage (WiFi credentials, calibration) |
+| `0x00F000` | 4 KB | **phy_init** | `0x01 / 0x01` | RF PHY initialization data |
+| `0x010000` | 6 MB | **factory** | `0x00 / 0x00` | ESP-IDF MicroPython runtime (FreeRTOS, LVGL, I2S, Camera) |
+| `0x610000` | ~10 MB | **vfs** | `0x01 / 0x81` | LittleFS Filesystem (`s4s.py`, `s4sble.py`, `ui.py`, `main.py`) |
+
+### Microcontroller Pin Mapping (ESP32-S3)
+* **SPI Bus (LCD Screen - ST7789 320x240)**:
+  * MOSI: `GPIO 40`
+  * MISO: `GPIO 38`
+  * SCK: `GPIO 39`
+* **I2C Bus 0 (Internal Mainboard / Motors / Servos)**:
+  * SDA: `GPIO 42`
+  * SCL: `GPIO 41`
+  * Speed: 100 kHz
+* **I2C Bus 1 (External Sensors & K210 AI Camera)**:
+  * SDA: `GPIO 1`
+  * SCL: `GPIO 2`
+  * Speed: 100 kHz
+
+### LittleFS Extracted System Files
+Located in `firmware/extracted_vfs/`:
+* `s4s.py`: Full hardware abstraction layer (`Movement`, `Servo`, `LSM6DS3`, `Ultrasonic`, `Line_sensor`, `Voice`, `Vision`, `Light`).
+* `s4sble.py`: Low-energy Bluetooth stack with full service UUID definitions.
+* `ui.py`: LVGL-driven user interface for status display, IP, battery, and server state.
+* `boot.py`: Bootloader with XMODEM mainboard firmware flashing support.
+* `main.py`: Interactive execution loop, websocket client, and dual REPL output.
