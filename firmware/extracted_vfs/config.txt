@@ -1,0 +1,7 @@
+{
+    "wifi": {
+        "ssid": " ",
+        "pswd": " "
+    },
+    "websocket": "ws://139.129.32.56:3000/ws/device", 
+}
